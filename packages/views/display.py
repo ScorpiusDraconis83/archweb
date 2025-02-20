@@ -128,13 +128,15 @@ def details(request, name='', repo='', arch=''):
             pkg = Package.objects.select_related(
                 'arch', 'repo', 'packager').get(pkgname=name,
                                                 repo=repo_obj, arch=arch_obj)
-            rbstatus = None
-            try:
-                rbstatus = RebuilderdStatus.objects.get(pkg=pkg)
-            except RebuilderdStatus.DoesNotExist:
-                pass
             if request.method == 'HEAD':
                 return empty_response()
+
+            rbstatus = None
+            if request.user.is_authenticated:
+                try:
+                    rbstatus = RebuilderdStatus.objects.get(pkg=pkg)
+                except RebuilderdStatus.DoesNotExist:
+                    pass
             return render(request, 'packages/details.html', {'pkg': pkg, 'rbstatus': rbstatus,
                           'notreproducible': rbstatus.status == RebuilderdStatus.BAD if rbstatus else False})
         except Package.DoesNotExist:

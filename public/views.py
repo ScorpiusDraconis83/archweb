@@ -3,6 +3,7 @@ from datetime import datetime
 from operator import attrgetter
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -25,12 +26,12 @@ def index(request):
     else:
         def updates():
             return get_recent_updates()
-    domain = "%s://%s" % (request.scheme, request.META.get('HTTP_HOST'))
+    current_site = Site.objects.get_current()
     context = {
         'news_updates': News.objects.order_by('-postdate', '-id')[:15],
         'pkg_updates': updates,
         'staff_groups': StaffGroup.objects.all(),
-        'domain': domain,
+        'domain': current_site.domain,
     }
     return render(request, 'public/index.html', context)
 
@@ -92,8 +93,9 @@ def feeds(request):
 @cache_control(max_age=307)
 def keys(request):
     profile_ids = UserProfile.allowed_repos.through.objects.values('userprofile_id')
-    users = User.objects.filter(
-            is_active=True, userprofile__id__in=profile_ids).order_by('first_name', 'last_name')
+    users = User.objects.filter(is_active=True,
+                                userprofile__id__in=profile_ids).order_by('first_name',
+                                                                          'last_name').select_related('userprofile')
     user_key_ids = frozenset(user.userprofile.pgp_key[-16:] for user in users
             if user.userprofile.pgp_key)
 

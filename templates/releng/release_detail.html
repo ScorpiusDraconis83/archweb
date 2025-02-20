@@ -9,7 +9,7 @@
     <h2>{{ release.version }}</h2>
 
     <ul>
-        <li><strong>Release Date:</strong> {{ release.release_date|date }}</li>
+        <li><strong>Release Date:</strong> {{ release.release_date|date:"Y-m-d" }}</li>
         {% if release.kernel_version %}<li><strong>Kernel Version:</strong> {{ release.kernel_version }}</li>{% endif %}
         <li><strong>Available:</strong> {{ release.available|yesno|capfirst }}</li>
         {% if release.torrent_data %}
@@ -38,7 +38,7 @@
 
     <ul>
         <li><strong>Comment:</strong> {{ torrent.comment }}</li>
-        <li><strong>Creation Date:</strong> {{ torrent.creation_date|date:"DATETIME_FORMAT" }} UTC</li>
+        <li><strong>Creation Date:</strong> {{ torrent.creation_date|date:"Y-m-d H:i" }} UTC</li>
         <li><strong>Created By:</strong> {{ torrent.created_by }}</li>
         <li><strong>Announce URL:</strong> {{ torrent.announce }}</li>
         <li><strong>File Name:</strong> {{ torrent.file_name }}</li>

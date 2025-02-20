@@ -23,7 +23,7 @@ class MirrorlistForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(MirrorlistForm, self).__init__(*args, **kwargs)
         fields = self.fields
-        fields['country'].choices = [('all', 'All')] + self.get_countries()
+        fields['country'].choices = [('all', 'All'), *self.get_countries()]
         fields['country'].initial = ['all']
         protos = [(p.protocol, p.protocol) for p in MirrorProtocol.objects.filter(is_download=True)]
         initial = MirrorProtocol.objects.filter(is_download=True, default=True)
@@ -38,15 +38,6 @@ class MirrorlistForm(forms.Form):
             'country', flat=True).order_by().distinct())
         code_list = [(code, countries.name(code)) for code in country_codes]
         return sorted(code_list, key=itemgetter(1))
-
-    def as_div(self):
-        "Returns this form rendered as HTML <divs>s."
-        return self._html_output(
-            normal_row=u'<div%(html_class_attr)s>%(label)s %(field)s%(help_text)s</div>',
-            error_row=u'%s',
-            row_ender='</div>',
-            help_text_html=u' <span class="helptext">%s</span>',
-            errors_on_separate_row=True)
 
 
 @csrf_exempt

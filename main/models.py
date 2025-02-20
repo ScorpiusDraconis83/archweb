@@ -246,7 +246,7 @@ class Package(models.Model):
 
         # sort out duplicate packages; this happens if something has a double
         # versioned depend such as a kernel module
-        requiredby = [list(vals)[0] for _, vals in groupby(requiredby, lambda x: x.pkg.id)]
+        requiredby = [next(iter(vals)) for _, vals in groupby(requiredby, lambda x: x.pkg.id)]
         if not requiredby:
             return requiredby
 
@@ -280,7 +280,8 @@ class Package(models.Model):
             dep_pkgs = list(dep_pkgs)
             dep = dep_pkgs[0]
             if len(dep_pkgs) > 1:
-                dep_pkgs = [d for d in dep_pkgs if d.pkg.repo.testing == self.repo.testing and d.pkg.repo.staging == self.repo.staging]
+                dep_pkgs = [d for d in dep_pkgs
+                            if d.pkg.repo.testing == self.repo.testing and d.pkg.repo.staging == self.repo.staging]
                 if len(dep_pkgs) > 0:
                     dep = dep_pkgs[0]
             trimmed.append(dep)

@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import permission_required
 from django.urls import path, re_path
 
+from main.utils import cache_user_page
+
 from .views import (
     NewsCreateView,
     NewsDeleteView,
@@ -12,7 +14,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('', NewsListView.as_view(), name='news-list'),
+    path('', cache_user_page(317)(NewsListView.as_view()), name='news-list'),
 
     path('preview/', preview),
     # old news URLs, permanent redirect view so we don't break all links
@@ -21,7 +23,7 @@ urlpatterns = [
     path('add/',
          permission_required('news.add_news')(NewsCreateView.as_view())),
     re_path(r'^(?P<slug>[-\w]+)/$',
-            NewsDetailView.as_view()),
+            cache_user_page(317)(NewsDetailView.as_view())),
     re_path(r'^(?P<slug>[-\w]+)/edit/$',
             permission_required('news.change_news')(NewsEditView.as_view())),
     re_path(r'^(?P<slug>[-\w]+)/delete/$',

@@ -754,6 +754,10 @@ table.results {
         text-align: center;
     }
 
+    .results [hidden] {
+        display: none;
+    }
+
 /* pkglist: layout */
 #pkglist-about {
     margin-top: 1.5em;
@@ -1056,12 +1060,12 @@ table td.country {
     background: #ffd;
 }
 
-.results tr:nth-child(even),
+.results tr:nth-child(even of :not([hidden])),
 #article-list tr:nth-child(even) {
     background: #e4eeff;
 }
 
-.results tr:nth-child(odd),
+.results tr:nth-child(odd of :not([hidden])),
 #article-list tr:nth-child(odd) {
     background: #fff;
 }
@@ -1196,4 +1200,25 @@ ul.signoff-list {
 /* make the div not take the whole width */
 .pgp-key-ids {
     display: inline-block;
+}
+
+.logout-form {
+    display: inline-block;
+
+    /* style input as a normal anchor */
+    input {
+      background: none!important;
+      border: none;
+      padding: 0!important;
+      /*optional*/
+      font-family: arial, sans-serif;
+      font-size: 0.9em;
+      /*input has OS specific font-family*/
+      color: #07b;
+    }
+
+    input:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 }
